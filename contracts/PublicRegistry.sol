@@ -7,7 +7,6 @@ import "./deps/utils/AddressSet.sol";
 interface ICollection {
   function name() external view returns(string memory);
   function symbol() external view returns(string memory);
-  function totalSupply() external view returns(uint);
 }
 
 contract PublicRegistry is Ownable {
@@ -19,7 +18,6 @@ contract PublicRegistry is Ownable {
     address addr;
     string name;
     string symbol;
-    uint totalSupply;
     address owner;
   }
 
@@ -38,6 +36,10 @@ contract PublicRegistry is Ownable {
   function unregister(address collection) external {
     require(msg.sender == owner || msg.sender == Ownable(collection).owner());
     collections.remove(collection);
+  }
+
+  function isRegistered(address collection) external view returns(bool) {
+    return collections.exists(collection);
   }
 
   function fetchCollections(
@@ -60,7 +62,6 @@ contract PublicRegistry is Ownable {
         addr,
         collection.name(),
         collection.symbol(),
-        collection.totalSupply(),
         Ownable(addr).owner()
       );
     }

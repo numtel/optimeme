@@ -145,6 +145,16 @@ window.mintCollection = async function(event) {
   // TODO redirect to collection details page
 }
 
+window.testRegistry = async function() {
+  const registry = new web3.eth.Contract(
+    await (await fetch('/PublicRegistry.abi')).json(),
+    config.contracts.PublicRegistry.address);
+
+  await registry.methods.register('0x56743A38eEFCF4A0B77544149C96b8dC7EB6a7D4')
+    .send({from:accounts[0]});
+}
+
+
 window.readRegistry = async function() {
   const registry = new web3.eth.Contract(
     await (await fetch('/PublicRegistry.abi')).json(),
@@ -152,4 +162,6 @@ window.readRegistry = async function() {
 
   const count = await registry.methods.collectionCount().call();
   console.log(count);
+  const result = await registry.methods.fetchCollections(0,10).call();
+  console.log(result);
 }
