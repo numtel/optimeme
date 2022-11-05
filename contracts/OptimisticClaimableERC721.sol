@@ -7,12 +7,33 @@ import "./deps/uma/OptimisticRequester.sol";
 import "./deps/utils/Strings.sol";
 import "./deps/utils/AddressSet.sol";
 
-import "./UmaArbitrator.sol";
+interface IArbitrator {
+  function priceIdentifier() external view returns(bytes32);
 
-contract OptimisticClaimableERC721 is ERC721URIStorage, Ownable, UmaArbitrator, OptimisticRequester {
+  function requestStatus(
+    bytes memory ancillaryData,
+    uint liveness
+  ) external;
+
+  function assertPrice(
+    address proposer,
+    uint timestamp,
+    bytes memory ancillaryData,
+    int256 price
+  ) external;
+
+  function dispute(
+    address disputer,
+    uint timestamp,
+    bytes memory ancillaryData
+  ) external;
+}
+
+contract OptimisticClaimableERC721 is ERC721URIStorage, Ownable, OptimisticRequester {
   using AddressSet for AddressSet.Set;
 
   uint constant public claimDuration = 4 days;
+  address public arbitrator;
 
   struct MintData {
     uint tokenId;
@@ -39,14 +60,13 @@ contract OptimisticClaimableERC721 is ERC721URIStorage, Ownable, UmaArbitrator, 
   event ClaimAppealed(uint tokenId, uint claimIndex, address claimId, uint refund);
   event ClaimApproved(uint tokenId, uint claimIndex, address claimId);
   event ClaimDeclined(uint tokenId, uint claimIndex, address claimId);
+  event NewArbitrator(address indexed oldArbitrator, address indexed newArbitrator);
 
   constructor(
     MintData[] memory initialMint,
     string memory name_,
-    string memory symbol_,
-    address _finderAddress,
-    address _currency
-  ) ERC721(name_, symbol_) UmaArbitrator(_finderAddress, _currency) {
+    string memory symbol_
+  ) ERC721(name_, symbol_) {
     _transferOwnership(msg.sender);
     _batchMint(initialMint);
   }
@@ -64,6 +84,11 @@ contract OptimisticClaimableERC721 is ERC721URIStorage, Ownable, UmaArbitrator, 
 
   function transferOwnership(address newOwner) external onlyOwner {
     _transferOwnership(newOwner);
+  }
+
+  function setArbitrator(address newArbitrator) external onlyOwner {
+    emit NewArbitrator(arbitrator, newArbitrator);
+    arbitrator = newArbitrator;
   }
 
   // Fetch a paginated set of claims to ownership of a specific token
@@ -98,12 +123,14 @@ contract OptimisticClaimableERC721 is ERC721URIStorage, Ownable, UmaArbitrator, 
       uint256 tokenId,
       string memory inputStatement
   ) public {
+    require(arbitrator != address(0));
+
     bytes memory ancillaryData = abi.encodePacked(
       Strings.toHexString(to),
       "is the rightful owner of token with ID #",
       Strings.toString(tokenId),
-      "? Answer: 0 yes (default) or 1 for no. (Claim ",
-      Strings.toString(claims.length + 1),
+      "? Answer: 0 yes (default) or 1 for no. (Claim #",
+      Strings.toString(claims.length),
       ") Their statement: ",
       inputStatement
     );
@@ -120,7 +147,23 @@ contract OptimisticClaimableERC721 is ERC721URIStorage, Ownable, UmaArbitrator, 
     claimsByTokenId[tokenId].insert(claimId);
     claims.push(claim);
 
-    _requestStatus(ancillaryData, claimDuration);
+    IArbitrator(arbitrator).requestStatus(ancillaryData, claimDuration);
+  }
+
+  function claimCounter(uint claimIndex) external {
+    require(arbitrator != address(0));
+    ClaimData storage claim = claims[claimIndex];
+    require(claim.status == ClaimStatus.PENDING);
+
+    IArbitrator(arbitrator).assertPrice(msg.sender, claim.beginTime, claim.ancillaryData, 1);
+  }
+
+  function claimAppeal(uint claimIndex) external {
+    require(arbitrator != address(0));
+    ClaimData storage claim = claims[claimIndex];
+    require(claim.status == ClaimStatus.COUNTERED);
+
+    IArbitrator(arbitrator).dispute(msg.sender, claim.beginTime, claim.ancillaryData);
   }
 
   // Hash such that an account can only claim a token once
@@ -141,7 +184,7 @@ contract OptimisticClaimableERC721 is ERC721URIStorage, Ownable, UmaArbitrator, 
     address claimId = claimsByAncillaryData[ancillaryData];
     ClaimData storage claim = claims[claimsById[claimId]];
 
-    require(identifier == priceIdentifier);
+    require(identifier == IArbitrator(arbitrator).priceIdentifier());
     require(timestamp == claim.beginTime);
     claim.status = ClaimStatus.COUNTERED;
     emit ClaimCountered(claim.tokenId, claim.claimNumber, claimHash(claim));
@@ -157,7 +200,7 @@ contract OptimisticClaimableERC721 is ERC721URIStorage, Ownable, UmaArbitrator, 
     address claimId = claimsByAncillaryData[ancillaryData];
     ClaimData storage claim = claims[claimsById[claimId]];
 
-    require(identifier == priceIdentifier);
+    require(identifier == IArbitrator(arbitrator).priceIdentifier());
     require(timestamp == claim.beginTime);
     claim.status = ClaimStatus.APPEALED;
     emit ClaimAppealed(claim.tokenId, claim.claimNumber, claimId, refund);
@@ -173,7 +216,7 @@ contract OptimisticClaimableERC721 is ERC721URIStorage, Ownable, UmaArbitrator, 
     address claimId = claimsByAncillaryData[ancillaryData];
     ClaimData storage claim = claims[claimsById[claimId]];
 
-    require(identifier == priceIdentifier);
+    require(identifier == IArbitrator(arbitrator).priceIdentifier());
     require(timestamp == claim.beginTime);
     if(price == 0) {
       claim.status = ClaimStatus.APPROVED;
