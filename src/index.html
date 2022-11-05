@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Optimeme Factory</title>
+    <script src="/deps/web3.min.js"></script>
+    <script src="/deps/coinbase.min.js"></script>
+    <script src="/deps/web3modal.min.js"></script>
+    <script src="/index.js" type="module"></script>
+    <link rel="stylesheet" href="/normalize.css">
+    <link rel="stylesheet" href="/concrete.css">
+    <link rel="stylesheet" href="/style.css">
+  </head>
+  <body>
+  <main>
+    <header>
+      <h1><a href="/">Optimeme Factory</a></h1>
+      <p>
+        <a href="#"><button>Browse Collections</button></a>
+        <a href="#"><button>Deploy New Collection</button></a>
+        <a href="https://github.com/numtel/optimeme"><button>Github</button></a>
+      </p>
+      <div id="wallet-status"></div>
+      <section>
+      <form>
+        <fieldset>
+          <legend>Deploy New Collection</legend>
+          <button onclick="uploadImage(); return false">Add Token from image upload</button>
+
+        </fieldset>
+      </form>
+      </section>
+    </header>
+  </main>
+  </body>
+</html>

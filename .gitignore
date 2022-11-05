@@ -1,0 +1,8 @@
+*.swp
+*.swo
+package-lock.json
+yarn-lock.json
+node_modules
+build
+meta
+solc

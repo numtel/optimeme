@@ -1,0 +1,20 @@
+{
+  "name": "optimeme",
+  "version": "1.0.0",
+  "description": "",
+  "scripts": {
+    "dev": "lite-server",
+    "test": "node test/index.js",
+    "todo": "bash -c \"grep -rn 'TODO' --exclude-dir={node_modules,build} --exclude={*.min*,*.swp,package.json,solc} *\"",
+    "build-dev": "./solc --bin --abi --overwrite -o build contracts/*.sol",
+    "build-test": "./solc --bin --abi --overwrite -o build test/contracts/*.sol",
+    "build-prod": "./solc --bin --abi --overwrite -o build --optimize contracts/*.sol"
+  },
+  "author": "numtel <ben@latenightsketches.com>",
+  "license": "MIT",
+  "devDependencies": {
+    "ganache": "^7.0.4",
+    "lite-server": "^2.3.0",
+    "web3": "^1.7.3"
+  }
+}
