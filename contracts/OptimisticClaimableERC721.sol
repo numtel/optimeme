@@ -88,6 +88,10 @@ contract OptimisticClaimableERC721 is ERC721URIStorage, Ownable, UmaArbitrator, 
     return out;
   }
 
+  function tokenClaimCount(uint256 tokenId) external view returns(uint) {
+    return claimsByTokenId[tokenId].keyList.length;
+  }
+
   // Make a claim to the rightful owner of a token
   function claimToken(
       address to,
