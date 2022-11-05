@@ -15,7 +15,8 @@ const signer = web3.eth.accounts.privateKeyToAccount(config.private);
 web3.eth.accounts.wallet.add(signer);
 
 (async function() {
-  await deployContract('FileUpload');
+//   await deployContract('FileUpload');
+  await deployContract('PublicRegistry');
 
 })();
 

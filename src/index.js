@@ -124,13 +124,32 @@ window.mintCollection = async function(event) {
         // tokenURI
         image ? image.src.replace('http://web3q.io/', 'web3://') : null,
       ];
-    }).filter(row => !!row.tokenURI);
+    }).filter(row => !!row[2]); // Filter out empty images
   if(!mintData.length) {
     alert('No images uploaded!');
     return;
   }
-  console.log(name, symbol, mintData);
-//   const uploader = new web3.eth.Contract(
-//     await (await fetch('/FileUpload.abi')).json(),
-//     config.contracts.FileUpload.address);
+  const abi = await (await fetch('/OptimisticClaimableERC721.abi')).json();
+  const bytecode = await (await fetch('/OptimisticClaimableERC721.bin')).text();
+  const contract = new web3.eth.Contract(abi);
+  const deployTx = contract.deploy({
+    data: bytecode,
+    arguments: [mintData, name, symbol,
+      document.getElementById('public').checked
+        ? config.contracts.PublicRegistry.address
+        : ZERO_ACCOUNT
+    ]
+  });
+  const deployedContract = await deployTx.send({ from: accounts[0] })
+
+  // TODO redirect to collection details page
+}
+
+window.readRegistry = async function() {
+  const registry = new web3.eth.Contract(
+    await (await fetch('/PublicRegistry.abi')).json(),
+    config.contracts.PublicRegistry.address);
+
+  const count = await registry.methods.collectionCount().call();
+  console.log(count);
 }

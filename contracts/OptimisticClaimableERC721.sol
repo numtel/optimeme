@@ -29,6 +29,10 @@ interface IArbitrator {
   ) external;
 }
 
+interface IRegistry {
+  function register(address collection) external;
+}
+
 contract OptimisticClaimableERC721 is ERC721URIStorage, Ownable, OptimisticRequester {
   using AddressSet for AddressSet.Set;
 
@@ -65,10 +69,15 @@ contract OptimisticClaimableERC721 is ERC721URIStorage, Ownable, OptimisticReque
   constructor(
     MintData[] memory initialMint,
     string memory name_,
-    string memory symbol_
+    string memory symbol_,
+    address registry
   ) ERC721(name_, symbol_) {
     _transferOwnership(msg.sender);
     _batchMint(initialMint);
+
+    if(registry != address(0)) {
+      IRegistry(registry).register(address(this));
+    }
   }
 
   function _batchMint(MintData[] memory data) internal {

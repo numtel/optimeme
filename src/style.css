@@ -13,3 +13,5 @@ button:hover { transform:scale(104%) rotate(-2deg); }
 #mints td.loading * {display:none; }
 #mints td.loading:after { content:"Loading..."}
 #mints td img { max-width:128px; max-height:128px; cursor:pointer; }
+
+label.check { font-size: 0.7em; font-weight:normal; }
