@@ -190,3 +190,28 @@ export function isBytes32(value) {
 export function isFunSig(value) {
   return typeof value === 'string' && value.match(/^0x[a-f0-9]{8}$/i);
 }
+
+export async function displayAddress(address) {
+  const name = await ensReverse(address);
+  if(name) return name;
+  return ellipseAddress(address);
+}
+
+export async function ensReverse(address) {
+  const web3 = new Web3('https://eth.public-rpc.com/');
+  const namehash = await web3.eth.call({
+    to: '0x084b1c3c81545d370f3634392de611caabff8148', // ENS: Reverse Registrar
+    data: web3.eth.abi.encodeFunctionCall({
+      name: 'node', type: 'function',
+      inputs: [{type: 'address', name: 'addr'}]
+    }, [address])
+  });
+  return web3.eth.abi.decodeParameter('string', await web3.eth.call({
+    to: '0xa2c122be93b0074270ebee7f6b7292c7deb45047', // ENS: Default Reverse Resolver
+    data: web3.eth.abi.encodeFunctionCall({
+      name: 'name', type: 'function',
+      inputs: [{type: 'bytes32', name: 'hash'}]
+    }, [namehash])
+  }));
+}
+
