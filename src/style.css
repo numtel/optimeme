@@ -1,5 +1,6 @@
+@font-face { font-family: Modak; font-weight: 400; src: url(Modak-Regular.ttf); }
 
-h1 { background: linear-gradient(90deg, rgba(131,58,180,1) 0%, rgba(253,29,29,1) 50%, rgba(252,176,69,1) 100%); background-clip: text; -webkit-background-clip: text; -webkit-text-fill-color: transparent; transform: rotate(-1deg); }
+h1 { font-family: Modak; font-size: 3em; background: linear-gradient(90deg, rgba(131,58,180,1) 0%, rgba(253,29,29,1) 50%, rgba(252,176,69,1) 100%); background-clip: text; -webkit-background-clip: text; -webkit-text-fill-color: transparent; transform: rotate(-3deg); }
 h1:hover { transform:scale(110%) rotate(1deg); }
 
 @media (prefers-color-scheme: dark) {

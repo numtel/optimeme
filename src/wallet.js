@@ -197,6 +197,7 @@ export async function displayAddress(address) {
   return ellipseAddress(address);
 }
 
+// TODO cache responses
 export async function ensReverse(address) {
   const web3 = new Web3('https://eth.public-rpc.com/');
   const namehash = await web3.eth.call({
