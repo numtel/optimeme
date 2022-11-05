@@ -39,11 +39,13 @@ window.disconnect = async function() {
   window.location.reload();
 }
 
-window.uploadImage = async function() {
+window.uploadImage = async function(rootEvent) {
   if(!config) await connect();
   const input = document.createElement('input');
+  const td = rootEvent.target.closest('td');
   input.setAttribute('type', 'file');
   input.onchange = (event) => {
+    td.classList.toggle('loading', true);
     const reader = new FileReader();
     reader.readAsArrayBuffer(event.target.files[0]);
     reader.onloadend = async (evt) => {
@@ -55,7 +57,14 @@ window.uploadImage = async function() {
         const result = await uploader.methods.upload(data).send({
           from: accounts[0]
         });
-        console.log(data, result, web3);
+
+        td.classList.toggle('loading', false);
+
+        const uploadIndex = result.events.Uploaded.returnValues.index;
+        const url = config.uploadPrefix + uploadIndex;
+        td.innerHTML = `
+          <img src="${url}" alt="Select Image" onclick="uploadImage(event)">
+        `;
       }
     }
   };
@@ -64,4 +73,64 @@ window.uploadImage = async function() {
 
 async function erc20(address) {
   return new web3.eth.Contract(await (await fetch('/IERC20.abi')).json(), address);
+}
+
+window.addToken = async function() {
+  const tbody = document.querySelector('#mints tbody');
+  const index = tbody.childElementCount + 1;
+  const row = document.createElement('tr');
+  row.innerHTML = `
+    <td>
+      <button title="Remove Token" onclick="removeToken(event); return false">X</button>
+      <span class="index">${index}</span>
+    </td>
+    <td>
+      <button class="uploader" onclick="uploadImage(event); return false">
+        Upload image...
+      </button>
+    </td>
+    <td>
+      <input type="text" placeholder="Address, ENS name, or empty">
+    </td>
+  `;
+  tbody.appendChild(row);
+}
+
+window.removeToken = async function(event) {
+  const tbody = document.querySelector('#mints tbody');
+  const tr = event.target.closest('tr');
+  if(tr.querySelector('img') && !confirm('Are you sure you want to remove this token?')) return;
+  tbody.removeChild(tr);
+}
+
+window.mintCollection = async function(event) {
+  if(!config) await connect();
+
+  const name = document.querySelector('#name').value;
+  const symbol = document.querySelector('#symbol').value;
+  if(!name || !symbol) {
+    alert('Name and symbol required!');
+    return;
+  }
+
+  const mintData = Array.from(document.querySelectorAll('#mints tbody tr'))
+    .map(row => {
+      const image = row.querySelector('img');
+      return [
+        // tokenId
+        row.querySelector('span.index').innerHTML,
+        // recipient
+        row.querySelector('input').value || accounts[0],
+        // tokenURI
+        image ? image.src.replace('http://web3q.io/', 'web3://') : null,
+      ];
+    }).filter(row => !!row.tokenURI);
+  if(!mintData.length) {
+    alert('No images uploaded!');
+    return;
+  }
+  console.log(name, symbol, mintData);
+//   const uploader = new web3.eth.Contract(
+//     await (await fetch('/FileUpload.abi')).json(),
+//     config.contracts.FileUpload.address);
 }

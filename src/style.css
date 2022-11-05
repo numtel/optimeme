@@ -9,3 +9,7 @@ h1 { background: linear-gradient(90deg, rgba(131,58,180,1) 0%, rgba(253,29,29,1)
 h1 + p { transform: rotate(2deg); }
 #wallet-status { transform: rotate(-2deg); }
 button:hover { transform:scale(104%) rotate(-2deg); }
+
+#mints td.loading * {display:none; }
+#mints td.loading:after { content:"Loading..."}
+#mints td img { max-width:128px; max-height:128px; cursor:pointer; }
