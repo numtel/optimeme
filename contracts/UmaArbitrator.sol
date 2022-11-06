@@ -48,6 +48,7 @@ contract UmaArbitrator is OptimisticRequester {
   ) external onlyParent {
     oo.requestPrice(priceIdentifier, block.timestamp, ancillaryData, currency, 0);
     if (liveness > 0) oo.setCustomLiveness(priceIdentifier, block.timestamp, ancillaryData, liveness);
+    oo.setCallbacks(priceIdentifier, block.timestamp, ancillaryData, true, true, true);
   }
 
   // Invoked by the originator if transfer should be cancelled
@@ -58,8 +59,10 @@ contract UmaArbitrator is OptimisticRequester {
     int256 price
   ) external onlyParent {
     uint amount = _getStore().computeFinalFee(address(currency)).rawValue;
-    currency.safeTransferFrom(proposer, address(this), amount);
-    currency.approve(address(oo), amount);
+    if(amount > 0) {
+      currency.safeTransferFrom(proposer, address(this), amount);
+      currency.approve(address(oo), amount);
+    }
     oo.proposePriceFor(
       proposer,
       address(this),
@@ -77,8 +80,10 @@ contract UmaArbitrator is OptimisticRequester {
     bytes memory ancillaryData
   ) external onlyParent {
     uint amount = _getStore().computeFinalFee(address(currency)).rawValue;
-    currency.safeTransferFrom(disputer, address(this), amount);
-    currency.approve(address(oo), amount);
+    if(amount > 0) {
+      currency.safeTransferFrom(disputer, address(this), amount);
+      currency.approve(address(oo), amount);
+    }
     oo.disputePriceFor(
       disputer,
       address(this),

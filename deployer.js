@@ -3,9 +3,9 @@ const fs = require('fs');
 
 const config = require('../deploy-optimeme.json');
 const chainParams = {
-  gas: 50000000,
+  gas: 3000000,
   gasPrice: 6000000000,
-  explorer: 'https://explorer.galileo.web3q.io/tx/',
+  explorer: config.explorer,
 };
 const BUILD_DIR = 'build/';
 

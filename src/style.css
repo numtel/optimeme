@@ -19,3 +19,24 @@ label.check { font-size: 0.7em; font-weight:normal; }
 #collection a {}
 #collection a img { float:left; margin:0 20px 20px 0; max-width: 20%; }
 #collection a:hover img { transform:scale(110%) rotate(-3deg);}
+
+#token img { display:block; margin: 20px auto; }
+p.caption { font-size:0.7em; text-align:center; opacity:0.3; margin-bottom:40px;}
+
+
+.status-badge { padding: 5px; border-radius: 4px; margin-right: 5px; font-size:1.5rem; vertical-align:middle; }
+.status-badge.Pending {background:#fff3cdbb;}
+.status-badge.Approved {background:#cfe2ffbb;}
+.status-badge.Appealed {background:#d1e7ddbb;}
+.status-badge.Countered {background:#f8d7dabb;}
+.status-badge.Declined {background:#cff4fcbb;}
+
+@media (prefers-color-scheme: dark) {
+
+.status-badge.Pending {background:#ffe3009e;}
+.status-badge.Approved {background:#0058ff9e;}
+.status-badge.Appealed {background:#00ff649e;}
+.status-badge.Countered {background:#ff00009e;}
+.status-badge.Declined {background:#aeaeae9e;}
+
+}

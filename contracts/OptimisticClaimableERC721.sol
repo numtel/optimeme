@@ -147,7 +147,7 @@ contract OptimisticClaimableERC721 is ERC721URIStorage, Ownable, OptimisticReque
 
     bytes memory ancillaryData = abi.encodePacked(
       Strings.toHexString(to),
-      "is the rightful owner of token with ID #",
+      " is the rightful owner of token with ID #",
       Strings.toString(tokenId),
       "? Answer: 0 yes (default) or 1 for no. (Claim #",
       Strings.toString(claims.length),

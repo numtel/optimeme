@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Optimeme Factory</title>
+    <script src="/deps/web3.min.js"></script>
+    <script src="/deps/coinbase.min.js"></script>
+    <script src="/deps/web3modal.min.js"></script>
+    <script src="/index.js" type="module"></script>
+    <link rel="stylesheet" href="/normalize.css">
+    <link rel="stylesheet" href="/concrete.css">
+    <link rel="stylesheet" href="/style.css">
+  </head>
+  <body>
+  <main>
+    <header>
+      <h1><a href="/">Optimeme Factory</a></h1>
+      <p>
+        <a href="/"><button>Browse Collections</button></a>
+        <a href="/deploy.html"><button>Deploy New Collection</button></a>
+        <a href="https://github.com/numtel/optimeme"><button>Github</button></a>
+      </p>
+      <div id="wallet-status"></div>
+    </header>
+      <section>
+      <p><a href="#" onclick="window.location='/details.html'+location.search">&lt; Return to Collection</a></p>
+      <h2>Token Details</h2>
+      <div id="token"></div>
+      </section>
+  </main>
+  </body>
+</html>
+
