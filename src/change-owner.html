@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Optimeme Factory</title>
+    <title>Change Owner - Optimeme Factory</title>
     <script src="/deps/web3.min.js"></script>
     <script src="/deps/coinbase.min.js"></script>
     <script src="/deps/web3modal.min.js"></script>
@@ -24,21 +24,23 @@
       <div id="wallet-status"></div>
     </header>
       <section>
-        <p>All NFTs made in the factory can be claimed by anyone. These claims can be disputed within 4 days</p>
-        <p>Triply optimistic: <a href="https://optimism.io">rollup</a>, <a href="https://umaproject.org">arbitrator</a>, and claim to ownership</p>
-      </section>
-      <section>
-        <table id="collections">
-          <thead>
-            <tr>
-              <th>Name</th>
-              <th>Details</th>
-            </tr>
-          </thead>
-          <tbody>
-          </tbody>
-        </table>
+      <p><a href="#" onclick="window.location='/details.html'+location.search">&lt; Return to Collection</a></p>
+      <h2>Change Owner</h2>
+      <form onsubmit="changeOwner(event); return false">
+        <fieldset>
+          <legend>New Owner</legend>
+          <p>
+            <label for="addr">Account</label>
+            <input id="addr" placeholder="Address or ENS name" type="text">
+          </p>
+        </fieldset>
+        <p>
+          <button type="submit">Submit</button>
+        </p>
+      </form>
       </section>
   </main>
   </body>
 </html>
+
+

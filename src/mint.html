@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Deploy New Collection - Optimeme Factory</title>
+    <title>Mint Tokens - Optimeme Factory</title>
     <script src="/deps/web3.min.js"></script>
     <script src="/deps/coinbase.min.js"></script>
     <script src="/deps/web3modal.min.js"></script>
@@ -24,29 +24,13 @@
       <div id="wallet-status"></div>
     </header>
       <section>
-      <h2>Deploy New Collection</h2>
-      <form onsubmit="mintCollection(event); return false">
+      <p><a href="#" onclick="window.location='/details.html'+location.search">&lt; Return to Collection</a></p>
+      <h2>Mint Tokens</h2>
+      <form onsubmit="mintMore(event); return false">
         <fieldset>
-          <legend>Collection Parameters</legend>
-          <p>
-            <label for="name">Name</label>
-            <input id="name" type="text">
-          </p>
-          <p>
-            <label for="symbol">Symbol</label>
-            <input id="symbol" type="text">
-          </p>
-          <p>
-            <label class="check">
-              <input type="checkbox" checked="checked" id="public">
-              List Collection Publicly on Homepage
-            </label>
-          </p>
-        </fieldset>
-        <fieldset>
-          <legend>Initial Token Mint</legend>
+          <legend>Token Details</legend>
           <button onclick="addToken(); return false">Add Token</button>
-          <table id="mints">
+          <table id="mints" class="additions">
             <thead>
               <tr>
                 <th>Index</th>
@@ -58,11 +42,13 @@
           </table>
         </fieldset>
         <p>
-          <button type="submit">Mint Collection</button>
+          <button type="submit">Submit</button>
         </p>
       </form>
       </section>
   </main>
   </body>
 </html>
+
+
 

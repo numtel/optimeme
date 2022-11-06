@@ -175,8 +175,9 @@ export function delay(ms) {
   });
 }
 
-export function explorer(address) {
-  return window.config.blockExplorer + '/address/' + address;
+export async function explorer(address) {
+  const config = await configPromise;
+  return config.blockExplorer + '/address/' + address;
 }
 
 export function isAddress(address) {

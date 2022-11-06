@@ -31,6 +31,7 @@ interface IArbitrator {
 
 interface IRegistry {
   function register(address collection) external;
+  function registerToken(uint tokenId) external;
 }
 
 contract OptimisticClaimableERC721 is ERC721URIStorage, Ownable, OptimisticRequester {
@@ -38,6 +39,8 @@ contract OptimisticClaimableERC721 is ERC721URIStorage, Ownable, OptimisticReque
 
   uint constant public claimDuration = 4 days;
   address public arbitrator;
+  address public registry;
+  uint public highestTokenId;
 
   struct MintData {
     uint tokenId;
@@ -70,20 +73,28 @@ contract OptimisticClaimableERC721 is ERC721URIStorage, Ownable, OptimisticReque
     MintData[] memory initialMint,
     string memory name_,
     string memory symbol_,
-    address registry
+    address registry_
   ) ERC721(name_, symbol_) {
     _transferOwnership(msg.sender);
-    _batchMint(initialMint);
 
-    if(registry != address(0)) {
+    if(registry_ != address(0)) {
+      registry = registry_;
       IRegistry(registry).register(address(this));
     }
+
+    _batchMint(initialMint);
   }
 
   function _batchMint(MintData[] memory data) internal {
     for(uint i=0; i<data.length; i++) {
       _safeMint(data[i].recipient, data[i].tokenId);
       _setTokenURI(data[i].tokenId, data[i].tokenURI);
+      if(registry != address(0)) {
+        IRegistry(registry).registerToken(data[i].tokenId);
+      }
+      if(data[i].tokenId > highestTokenId) {
+        highestTokenId = data[i].tokenId;
+      }
     }
   }
 
