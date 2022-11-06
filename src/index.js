@@ -22,6 +22,7 @@ window.addEventListener('load', async function() {
     walletEl.innerHTML = `<button onclick="connect()" title="Connect Wallet">Connect Wallet</button>`;
   }
 
+  // For getting the blockGasLimit
 //   console.log(await web3.eth.getBlock('latest'));
 
   const collectionTbody = document.querySelector('#collections tbody');
@@ -124,7 +125,6 @@ window.addEventListener('load', async function() {
         </li>
       `;
     }
-    console.log(claims);
     tokenEl.innerHTML = `
       <p>Owner: <a href="${await explorer(owner)}">${await displayAddress(owner)}</a></p>
       <img src="${tokenURI.replace('web3://', 'http://web3q.io/')}">

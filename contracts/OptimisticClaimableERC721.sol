@@ -170,6 +170,7 @@ contract OptimisticClaimableERC721 is ERC721URIStorage, Ownable, OptimisticReque
     IArbitrator(arbitrator).requestStatus(ancillaryData, claimDuration);
   }
 
+  // TODO add bytes storage for the counter claim to state their case
   function claimCounter(uint claimIndex) external {
     require(arbitrator != address(0));
     ClaimData storage claim = claims[claimIndex];
@@ -178,6 +179,7 @@ contract OptimisticClaimableERC721 is ERC721URIStorage, Ownable, OptimisticReque
     IArbitrator(arbitrator).assertPrice(msg.sender, claim.beginTime, claim.ancillaryData, 1);
   }
 
+  // TODO add bytes data storage for the appeal case to be made
   function claimAppeal(uint claimIndex) external {
     require(arbitrator != address(0));
     ClaimData storage claim = claims[claimIndex];
